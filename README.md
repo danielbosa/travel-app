@@ -106,6 +106,4 @@ La piattaforma soddisfa i seguenti requisiti funzionali (RF):
   - **Risultato**: Viene aggiunto un voto alla tappa e quindi calcolato il voto della giornata.
   - **Eccezioni**: /
 
-## Consigli CTO
-...
 
