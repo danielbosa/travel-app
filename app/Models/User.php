@@ -42,4 +42,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // one to many relation with travels table
+    public function travels(): HasMany
+    {
+        return $this->hasMany(Travel::class);
+    }
 }
