@@ -9,6 +9,8 @@ class travels extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     // one2many rel with user
     public function user(): BelongsTo
     {
