@@ -17,4 +17,10 @@ class Stop extends Model
     {
         return $this->belongsTo(Day::class);
     }
+
+    // one2many with stops: primary
+    public function stop_images(): HasMany
+    {
+        return $this->hasMany(Stop_images::class);
+    }
 }
