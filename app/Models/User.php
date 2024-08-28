@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Travel;
 
 class User extends Authenticatable
 {
@@ -43,7 +44,7 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    // one to many relation with travels table
+    // one2many with travels: primary
     public function travels(): HasMany
     {
         return $this->hasMany(Travel::class);
