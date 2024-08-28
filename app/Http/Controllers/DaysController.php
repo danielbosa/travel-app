@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Travel;
+use App\Models\Day;
 use Illuminate\Http\Request;
 
-class TravelsController extends Controller
+class DaysController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class TravelsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(travels $travels)
+    public function show(days $days)
     {
         //
     }
@@ -42,7 +42,7 @@ class TravelsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(travels $travels)
+    public function edit(days $days)
     {
         //
     }
@@ -50,7 +50,7 @@ class TravelsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, travels $travels)
+    public function update(Request $request, days $days)
     {
         //
     }
@@ -58,7 +58,7 @@ class TravelsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(travels $travels)
+    public function destroy(days $days)
     {
         //
     }
