@@ -24,7 +24,7 @@
 
 
         <nav class="navbar navbar-expand-md navbar-light shadow-sm">
-            <div class="container">
+            <div class="container" id="navbar">
                 <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">TravelApp</a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
