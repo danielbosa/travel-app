@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Day;
 
-class travels extends Model
+class Travel extends Model
 {
     use HasFactory;
+
+    protected $table = 'travels'; 
 
     protected $guarded = [];
 
