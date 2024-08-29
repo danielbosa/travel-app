@@ -1,4 +1,4 @@
-<footer class="footer container">
+<footer class="footer ">
     <p>© 2024 Travel App. All rights reserved.</p>
     <ul class="footer__links">
         <li><a href="/privacy">Privacy Policy</a></li>
