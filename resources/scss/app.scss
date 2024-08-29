@@ -10,14 +10,15 @@ $fa-font-path: "../fonts/webfonts" !default;
 @import '~bootstrap/scss/bootstrap';
 
 h1 {
-    color: $text-color;
+    color: $main-text;
 }
 
 nav{
     background-color: $main-bg;
 
-    div a{
-        color: $secondary-text;
+    #navbar a{
+        color: $secondary-bg;
+        font-weight: bold;
     }
 }
 
