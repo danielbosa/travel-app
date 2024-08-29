@@ -9,9 +9,16 @@
         background-color: $main-bg;
         padding: 8px 12px;
         border: 2px solid $secondary-bg;
+        width: 200px;
+        text-align: center;
     }
     a{
         text-decoration: none;
         color: $secondary-bg;
     }
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
 }
