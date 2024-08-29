@@ -9,6 +9,16 @@ $fa-font-path: "../fonts/webfonts" !default;
 
 @import '~bootstrap/scss/bootstrap';
 
+@import './components/_home.scss';
+@import './components/_footer.scss';
+
+body{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
 h1 {
     color: $main-text;
 }
@@ -22,8 +32,4 @@ nav{
     }
 }
 
-.hero{
-    img{
-        width: 100%; 
-    }
-}
+
