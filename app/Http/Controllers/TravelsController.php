@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Travel;
 use Illuminate\Http\Request;
+//to check auth user (if logged in)
+use Illuminate\Support\Facades\Auth; 
 
 class TravelsController extends Controller
 {
@@ -12,7 +14,12 @@ class TravelsController extends Controller
      */
     public function index()
     {
-        //
+        // get travels for current user
+        $userId = Auth::id();
+        $travels = Travel::where('user_id', $userId)->get();
+
+        // travels to view.blade
+        return view('admin.travels.index', ['travels' => $travels]);
     }
 
     /**
