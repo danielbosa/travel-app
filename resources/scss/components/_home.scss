@@ -1,0 +1,17 @@
+.hero{
+    img{
+        width: 100%; 
+    }
+}
+
+#cta{
+    .btn-cta{
+        background-color: $main-bg;
+        padding: 8px 12px;
+        border: 2px solid $secondary-bg;
+    }
+    a{
+        text-decoration: none;
+        color: $secondary-bg;
+    }
+}
