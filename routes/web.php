@@ -3,7 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\ComicController;
+use App\Http\Controllers\TravelsController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -23,8 +23,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 //Middlware controlla se l'utente è autenticato e verificato; se sì, allora le rotte vengono eseguite; se no entra in gioco la rotta di fallback che rimanda alla dashboard: ma se non è autenticato, allora viene rimandato alla login (e questo è definito in app/Http/Middleware/Authenticate.php)
 Route::middleware(['auth', 'verified'])->name('admin.')->prefix('admin')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    //Route::resource('comics', ComicController::class);
+    //Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [TravelsController::class, 'index'])->name('mytravels');
 });
 
 
@@ -32,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    //route for mytravels for logged-in
+    Route::get('/mytravels', [TravelsController::class, 'index'])->name('mytravels.index');
 });
 
 require __DIR__ . '/auth.php';
