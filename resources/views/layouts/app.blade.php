@@ -82,9 +82,10 @@
             </div>
         </nav>
 
-        <main class="">
+        <main class="mb-5">
             @yield('content')
         </main>
+        @include('partials.footer')
     </div>
 </body>
 
