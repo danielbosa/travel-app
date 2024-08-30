@@ -53,6 +53,8 @@ Route::middleware('auth')->group(function () {
     // route for create stops
     Route::get('/stops/create/{travel_id}/{day_id}', [StopController::class, 'create'])->name('stops.create');
 
+    Route::post('/stops/upload-image', [StopController::class, 'uploadImage'])->name('stops.upload-image');
+
 
 
 

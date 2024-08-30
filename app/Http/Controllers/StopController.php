@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Stop;
 use App\Models\Location;
+use App\Models\Stop_image;
 use Illuminate\Http\Request;
 
 class StopController extends Controller
@@ -61,11 +62,6 @@ class StopController extends Controller
                         ->with('success', 'Tappa aggiunta con successo.');
     }
 
-
-
-
-
-
     /**
      * Display the specified resource.
      */
@@ -111,6 +107,25 @@ class StopController extends Controller
         $stop->save();
 
         return response()->json(['success' => true]);
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif', // Valida il file immagine
+            'stop_id' => 'required|exists:stops,id', // Verifica che l'ID della tappa esista
+        ]);
+
+        $imageName = time() . '.' . $request->image->extension();
+        $request->image->move(public_path('images/stop_images'), $imageName);
+
+        // Salva l'immagine nel database
+        $stopImage = new Stop_image(); 
+        $stopImage->stop_id = $request->stop_id;
+        $stopImage->image_path = $imageName;
+        $stopImage->save();
+
+        return response()->json(['success' => true, 'image' => $stopImage]);
     }
 
 }
