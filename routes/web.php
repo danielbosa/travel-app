@@ -39,7 +39,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/travels/{id}', [TravelsController::class, 'show'])->name('travels.show');
 
     //route for create travel
-    Route::get('travels/create', [TravelsController::class, 'create'])->name('travels.create');
+    Route::get('/travels/create', [TravelsController::class, 'create'])->name('travels.create');
+
+    // Rotta per salvare un nuovo viaggio
+    Route::post('/travels', [TravelsController::class, 'store'])->name('travels.store');
+
+    // Rotta per la lista dei viaggi
+    Route::get('/travels', [TravelsController::class, 'index'])->name('travels.index');
+
 
     // Route per memorizzare una nuova tappa
     Route::post('/stops', [StopController::class, 'store'])->name('stops.store');
