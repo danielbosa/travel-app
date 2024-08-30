@@ -55,8 +55,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/stops/upload-image', [StopController::class, 'uploadImage'])->name('stops.upload-image');
 
-
-
+    Route::post('/stops/{id}/update-rating', [StopController::class, 'updateRating'])->name('stops.update-rating');
 
 });
 

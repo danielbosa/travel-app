@@ -128,4 +128,17 @@ class StopController extends Controller
         return response()->json(['success' => true, 'image' => $stopImage]);
     }
 
+    public function updateRating(Request $request, $id)
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        $stop = Stop::findOrFail($id);
+        $stop->vote = $request->input('rating');
+        $stop->save();
+
+        return response()->json(['success' => true]);
+    }
+
 }

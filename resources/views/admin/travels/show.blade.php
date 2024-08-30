@@ -125,7 +125,19 @@
                 <div class="modal-body">
                     <!-- Dettagli della tappa -->
                     <div id="stopDetails">
-                        <p><strong>Voto:</strong> <span id="stopRating"></span></p>
+                        <p><strong>Voto:</strong> <span id="stopRating">
+                            <p><span id="stopRating">
+                                    <!-- Stelle interattive -->
+                                    <span class="rating-stars">
+                                        <i class="fa-solid fa-star" data-value="1"></i>
+                                        <i class="fa-solid fa-star" data-value="2"></i>
+                                        <i class="fa-solid fa-star" data-value="3"></i>
+                                        <i class="fa-solid fa-star" data-value="4"></i>
+                                        <i class="fa-solid fa-star" data-value="5"></i>
+                                    </span>
+                                </span>
+                            </p>
+                            </span></p>
                         <p><strong>Descrizione:</strong> <span id="stopDescription"></span></p>
     
                         <!-- Campo Note Modificabile -->
@@ -210,8 +222,11 @@
 
             // Passa i dati alla modale
             document.getElementById('stopModalLabel').textContent = stopData.name;
-            document.getElementById('stopRating').textContent = stopData.rating || 'N/A';
+            document.getElementById('stopRating').textContent = stopData.vote || 'N/A';
             document.getElementById('stopDescription').textContent = stopData.description || 'N/A';
+
+            // Aggiorna il rating
+            updateRatingStars(stopData.vote);
 
             // Aggiorna il campo note
             const stopNotes = document.getElementById('stopNotes');
@@ -241,6 +256,51 @@
             initMap();
         });
     });
+
+    // Funzione per aggiornare le stelle di valutazione
+    function updateRatingStars(rating) {
+        const stars = document.querySelectorAll('.rating-stars i');
+        stars.forEach(star => {
+            const starValue = parseInt(star.getAttribute('data-value'));
+            star.classList.remove('fa-solid', 'fa-regular');
+            if (rating && starValue <= rating) {
+                star.classList.add('fa-solid');
+            } else {
+                star.classList.add('fa-regular');
+            }
+
+            // Aggiungi listener per la gestione del clic sulla stella
+            star.addEventListener('click', function() {
+                const selectedRating = parseInt(this.getAttribute('data-value'));
+
+                // Salva il nuovo rating nel database
+                saveRating(selectedRating);
+            });
+        });
+    }
+
+    // Funzione per salvare il voto
+    function saveRating(rating) {
+        fetch(`/stops/${stopData.id}/update-rating`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ rating: rating })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Aggiorna stopData con il nuovo rating
+                stopData.vote = rating;
+                updateRatingStars(rating);
+            } else {
+                alert('Errore durante il salvataggio del voto.');
+            }
+        })
+        .catch(error => console.error('Errore:', error));
+    }
 
     // Gestisci il click sull'icona di modifica
     document.addEventListener('click', function(event) {
@@ -296,3 +356,23 @@
     });
 </script>
 
+<style>
+    /* Stile per le stelle quando il voto è vuoto */
+    .rating-star {
+        color: #ddd; /* colore grigio chiaro per stelle non votate */
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    /* Stile per le stelle quando sono in hover */
+    .rating-star:hover,
+    .rating-star:hover ~ .rating-star {
+        color: #ffcc00; /* colore giallo per l'hover */
+    }
+
+    /* Stile per le stelle già votate */
+    .rated-star {
+        color: #ffcc00; /* colore giallo per stelle votate */
+        cursor: default;
+    }
+</style>
