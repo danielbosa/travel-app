@@ -41,9 +41,18 @@ class TravelsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(travels $travels)
+    public function show($id)
     {
-        //
+        // get travel data
+        $travel = Travel::findOrFail($id);
+
+        // check if travel belongs to current user
+        if ($travel->user_id !== Auth::id()) {
+            abort(403, 'Accesso negato');
+        }
+
+        // pass data
+        return view('admin.travels.show', ['travel' => $travel]);
     }
 
     /**
