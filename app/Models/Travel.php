@@ -22,8 +22,8 @@ class Travel extends Model
     }
 
     // one2many with days: primary
-    public function days(): HasMany
+    public function days()
     {
-        return $this->hasMany(Day::class);
+        return $this->hasMany(Day::class, 'travel_id');
     }
 }

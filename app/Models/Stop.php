@@ -15,19 +15,19 @@ class Stop extends Model
     protected $guarded = [];
 
     // one2many with day: secondary
-    public function day(): BelongsTo
+    public function day()
     {
         return $this->belongsTo(Day::class);
     }
 
     // one2many with stops: primary
-    public function stop_images(): HasMany
+    public function stop_images()
     {
         return $this->hasMany(Stop_images::class);
     }
 
     // one2one with locations
-    public function location(): hasOne
+    public function location()
     {
         return $this->hasOne(Location::class);
     }

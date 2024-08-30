@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Travel;
 use App\Models\Stop;
 
-class days extends Model
+class Day extends Model
 {
     use HasFactory;
 
@@ -20,8 +20,8 @@ class days extends Model
     }
 
     // one2many with stops: primary
-    public function stops(): HasMany
+    public function stops()
     {
-        return $this->hasMany(Stop::class);
+        return $this->hasMany(Stop::class, 'day_id');
     }
 }
