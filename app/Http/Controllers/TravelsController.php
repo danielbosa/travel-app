@@ -42,26 +42,37 @@ class TravelsController extends Controller
      * Display the specified resource.
      */
     public function show($id)
-    {
-        // get travel data with days and stops
-        $travel = Travel::with(['days.stops.stop_images'])->findOrFail($id);
+{
+    // Recupera il viaggio con giorni e tappe
+    $travel = Travel::with(['days.stops.location', 'days.stops.stop_images'])->findOrFail($id);
 
-        // check if travel belongs to current user
-        if ($travel->user_id !== Auth::id()) {
-            abort(403, 'Accesso negato');
-        }
-
-        // Calculate completion percentage for each day
-        foreach ($travel->days as $day) {
-            $totalStops = $day->stops->count();
-            $completedStops = $day->stops->where('visited', 1)->count();
-            $completionPercentage = $totalStops > 0 ? ($completedStops / $totalStops) * 100 : 0;
-            $day->completionPercentage = intval($completionPercentage);
-        }
-
-        // pass data to the view
-        return view('admin.travels.show', ['travel' => $travel]);
+    // Verifica che il viaggio appartenga all'utente corrente
+    if ($travel->user_id !== Auth::id()) {
+        abort(403, 'Accesso negato');
     }
+
+    // Calcola la percentuale di completamento per ciascun giorno
+    foreach ($travel->days as $day) {
+        $totalStops = $day->stops->count();
+        $completedStops = $day->stops->where('visited', 1)->count();
+        $completionPercentage = $totalStops > 0 ? ($completedStops / $totalStops) * 100 : 0;
+        $day->completionPercentage = intval($completionPercentage);
+    }
+
+    // Debug: Verifica i dati delle coordinate
+    foreach ($travel->days as $day) {
+        foreach ($day->stops as $stop) {
+            logger()->info('Stop Data:', [
+                'lat' => $stop->location->lat,
+                'lng' => $stop->location->lng,
+            ]);
+        }
+    }
+
+    // Passa i dati alla vista
+    return view('admin.travels.show', ['travel' => $travel]);
+}
+
 
     /**
      * Show the form for editing the specified resource.
