@@ -58,18 +58,17 @@
                                         {{ __('Logout') }}
                                 </a>
 
-                                {{-- !!! --}}
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </li>
+                            {{-- !!! --}}
                             {{-- TRAVELS MENU OPTION --}}
                             {{-- !!! --}}
                             <li class="nav-item">
                                 <a class="nav-link" href="">I tuoi viaggi</a>
                             </li>
 
-                            
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                            </li>
                         @endguest
                     </ul>
                 </div>
