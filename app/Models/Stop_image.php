@@ -15,6 +15,6 @@ class Stop_image extends Model
     // one2many with day: secondary
     public function stop(): BelongsTo
     {
-        return $this->belongsTo(Stop::class);
+        return $this->belongsTo(Stop::class, 'stop_id');
     }
 }

@@ -23,7 +23,7 @@ class Stop extends Model
     // one2many with stops: primary
     public function stop_images()
     {
-        return $this->hasMany(Stop_images::class);
+        return $this->hasMany(Stop_image::class, 'stop_id');
     }
 
     // one2one with locations
