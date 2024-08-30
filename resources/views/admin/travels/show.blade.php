@@ -33,25 +33,55 @@
                                 @endif
                                 <br>
                                 Ordine: {{ $day->order }}
-                                
+
                                 <h6>Tappe:</h6>
                                 @if($day->stops->isEmpty())
                                     <p>Non ci sono tappe associate a questa giornata.</p>
                                 @else
-                                    <div class="container">
+                                    <ul class="list-unstyled">
                                         @foreach($day->stops as $stop)
-                                            <div class="row mb-2 align-items-center">
-                                                <!-- Nome dello stop -->
-                                                <div class="col-9">
-                                                    <strong>{{ $stop->name }}</strong>
+                                            <li class="d-flex align-items-center mb-2">
+                                                <div class="row w-100">
+                                                    <div class="col-md-8">
+                                                        <strong>{{ $stop->name }}</strong>
+                                                    </div>
+                                                    <div class="col-md-4 text-end">
+                                                        <input type="checkbox" class="stop-checkbox" data-id="{{ $stop->id }}" {{ $stop->visited ? 'checked' : '' }}>
+                                                    </div>
                                                 </div>
-                                                <!-- Checkbox -->
-                                                <div class="col-3 d-flex justify-content-end">
-                                                    <input type="checkbox" class="stop-checkbox" data-id="{{ $stop->id }}" {{ $stop->visited ? 'checked' : '' }}>
-                                                </div>
-                                            </div>
+                                            </li>
                                         @endforeach
-                                    </div>
+                                    </ul>
+
+                                    <!-- Slider per le immagini delle tappe -->
+                                    <h6>Immagini delle tappe:</h6>
+                                    @php
+                                        // Recupera tutte le immagini delle tappe di questa giornata
+                                        $images = $day->stops->map(function ($stop) {
+                                            return $stop->stop_images;
+                                        })->flatten();
+                                    @endphp
+                                    @if($images->isEmpty())
+                                        <p>Non ci sono immagini per le tappe di questa giornata.</p>
+                                    @else
+                                        <div id="carouselImages{{ $index }}" class="carousel slide" data-bs-ride="carousel">
+                                            <div class="carousel-inner">
+                                                @foreach($images as $imageIndex => $image)
+                                                    <div class="carousel-item {{ $imageIndex === 0 ? 'active' : '' }}">
+                                                        <img src="{{ asset('images/stop_images/' . $image->image_path) }}" class="d-block w-100" alt="Image for stop {{ $image->stop_id }}">
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselImages{{ $index }}" data-bs-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Previous</span>
+                                            </button>
+                                            <button class="carousel-control-next" type="button" data-bs-target="#carouselImages{{ $index }}" data-bs-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Next</span>
+                                            </button>
+                                        </div>
+                                    @endif
                                 @endif
                             </div>
                         </div>
