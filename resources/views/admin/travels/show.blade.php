@@ -42,7 +42,9 @@
                                             <li class="d-flex align-items-center mb-2">
                                                 <div class="row w-100">
                                                     <div class="col-md-8">
-                                                        <strong>{{ $stop->name }}</strong>
+                                                        <a href="#" class="stop-name" data-bs-toggle="modal" data-bs-target="#stopModal" data-stop="{{ $stop }}" data-stop-name="{{ $stop->name }}">
+                                                            <strong>{{ $stop->name }}</strong>
+                                                        </a>
                                                     </div>
                                                     <div class="col-md-4 text-end">
                                                         <input type="checkbox" class="stop-checkbox" data-id="{{ $stop->id }}" {{ $stop->visited ? 'checked' : '' }}>
@@ -52,10 +54,10 @@
                                         @endforeach
                                     </ul>
 
-                                    <!-- Slider per le immagini delle tappe -->
+                                <!-- carousel -->
                                     <h6>Immagini delle tappe:</h6>
                                     @php
-                                        // Recupera tutte le immagini delle tappe di questa giornata
+                                        // get all images
                                         $images = $day->stops->map(function ($stop) {
                                             return $stop->stop_images;
                                         })->flatten();
@@ -108,5 +110,80 @@
             </a>
         </div>
     </div>
+    <!-- modal for stop details -->
+        <div class="modal fade" id="stopModal" tabindex="-1" aria-labelledby="stopModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="stopModalLabel"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- stop details -->
+                        <div id="stopDetails">
+                            <p><strong>Voto:</strong> <span id="stopRating"></span></p>
+                            <p><strong>Descrizione:</strong> <span id="stopDescription"></span></p>
+                            <p><strong>Note:</strong> <span id="stopNotes"></span></p>
+
+                            <!-- carousel -->
+                            <div id="stopImagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner" id="carouselInnerImages">
+                                    <!-- images will be loaded here -->
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#stopImagesCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#stopImagesCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 </section>
 @endsection
+
+{{-- SCRIPT --}}
+{{-- js script to show stop details dinamically: based on which stop is clicked --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const stopModal = document.getElementById('stopModal');
+            stopModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget; // Pulsante che ha attivato la modale
+                const stopData = JSON.parse(button.getAttribute('data-stop'));
+                const stopName = button.getAttribute('data-stop-name'); // Recupera il nome della tappa
+
+                // Imposta il titolo della modale con il nome della tappa
+                document.getElementById('stopModalLabel').textContent = stopName;
+
+                // Popola i campi della modale con i dati della tappa
+                document.getElementById('stopRating').textContent = stopData.rating || 'N/A';
+                document.getElementById('stopDescription').textContent = stopData.description || 'N/A';
+                document.getElementById('stopNotes').textContent = stopData.notes || 'N/A';
+
+                // Carica le immagini per il carosello
+                const carouselInner = document.getElementById('carouselInnerImages');
+                carouselInner.innerHTML = ''; // Pulisce le immagini precedenti
+
+                if (stopData.stop_images.length > 0) {
+                    stopData.stop_images.forEach(function(image, index) {
+                        const activeClass = index === 0 ? 'active' : '';
+                        carouselInner.innerHTML += `
+                            <div class="carousel-item ${activeClass}">
+                                <img src="{{ asset('images/stop_images/') }}/${image.image_path}" class="d-block w-100" alt="Immagine Tappa">
+                            </div>
+                        `;
+                    });
+                } else {
+                    carouselInner.innerHTML = '<p>Non ci sono immagini per questa tappa.</p>';
+                }
+            });
+        });
+    </script>
+
+
