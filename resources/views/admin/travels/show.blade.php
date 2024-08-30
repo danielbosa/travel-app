@@ -42,7 +42,7 @@
                                             <li class="d-flex align-items-center mb-2">
                                                 <div class="row w-100">
                                                     <div class="col-md-8">
-                                                        <a href="#" class="stop-name" data-bs-toggle="modal" data-bs-target="#stopModal" data-stop="{{ $stop }}" data-stop-name="{{ $stop->name }}">
+                                                        <a href="#" class="stop-name" data-bs-toggle="modal" data-bs-target="#stopModal" data-stop="{{ $stop->toJson() }}">
                                                             <strong>{{ $stop->name }}</strong>
                                                         </a>
                                                     </div>
@@ -54,10 +54,9 @@
                                         @endforeach
                                     </ul>
 
-                                <!-- carousel -->
+                                    <!-- carousel -->
                                     <h6>Immagini delle tappe:</h6>
                                     @php
-                                        // get all images
                                         $images = $day->stops->map(function ($stop) {
                                             return $stop->stop_images;
                                         })->flatten();
@@ -128,7 +127,7 @@
                         <div id="noteSection">
                             <p><strong>Note:</strong> 
                                 <span id="stopNotes">
-                                    <span id="stopNotesText">{{ $stop->notes ?? 'N/A' }}</span>
+                                    <span id="stopNotesText">N/A</span>
                                     <i class="fa-solid fa-pen-to-square" id="editNotesIcon" style="cursor: pointer;"></i>
                                 </span>
                             </p>
@@ -155,6 +154,9 @@
                                 <span class="visually-hidden">Next</span>
                             </button>
                         </div>
+
+                        <!-- Map -->
+                        <div id="stopMap" style="width: 100%; height: 400px; margin-top: 20px;"></div>
                     </div>
                 </div>
             </div>
@@ -165,21 +167,48 @@
 @endsection
 
 {{-- SCRIPT --}}
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZ4vCEJB25qHkOlSfaseqw3OpDbbrXxBA&callback=initMap"></script>
 <script>
     let stopData; // Definisci stopData a livello globale
 
+    // Funzione per inizializzare la mappa
+    function initMap() {
+        if (!stopData || !stopData.location.lat || !stopData.location.lng) {
+            console.error('stopData non definito o lat/lng mancante');
+            return;
+        }
+
+        const mapOptions = {
+            center: { lat: stopData.location.lat, lng: stopData.location.lng },
+            zoom: 12
+        };
+
+        const map = new google.maps.Map(document.getElementById('stopMap'), mapOptions);
+
+        // Aggiungi un marcatore alla mappa
+        new google.maps.Marker({
+            position: { lat: stopData.location.lat, lng: stopData.location.lng },
+            map: map,
+            title: stopData.name
+        });
+    }
+
+    // Gestisci l'apertura della modale
     document.addEventListener('DOMContentLoaded', function() {
         const stopModal = document.getElementById('stopModal');
         stopModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget; // Bottone che ha attivato la modale
-            stopData = JSON.parse(button.getAttribute('data-stop')); // Inizializza stopData con i dati della tappa
+            const button = event.relatedTarget;
+            stopData = JSON.parse(button.getAttribute('data-stop'));
 
-            // Passa i dati della tappa alla modale
+            // Verifica i dati ricevuti
+            console.log('stopData:', stopData);
+
+            // Passa i dati alla modale
             document.getElementById('stopModalLabel').textContent = stopData.name;
             document.getElementById('stopRating').textContent = stopData.rating || 'N/A';
             document.getElementById('stopDescription').textContent = stopData.description || 'N/A';
 
-            // Aggiorna il campo note con l'icona di modifica
+            // Aggiorna il campo note
             const stopNotes = document.getElementById('stopNotes');
             stopNotes.innerHTML = `
                 <span id="stopNotesText">${stopData.notes || 'N/A'}</span>
@@ -188,8 +217,8 @@
 
             // Carica le immagini del carosello
             const carouselInner = document.getElementById('carouselInnerImages');
-            carouselInner.innerHTML = ''; // Pulisce le immagini precedenti
-            
+            carouselInner.innerHTML = '';
+
             if (stopData.stop_images.length > 0) {
                 stopData.stop_images.forEach(function(image, index) {
                     const activeClass = index === 0 ? 'active' : '';
@@ -202,65 +231,63 @@
             } else {
                 carouselInner.innerHTML = '<p>Non ci sono immagini per questa tappa.</p>';
             }
-        });
 
-        // Gestisci il click sull'icona di modifica
-        document.addEventListener('click', function(event) {
-            if (event.target.id === 'editNotesIcon') {
-                const stopNotes = document.getElementById('stopNotes');
-                stopNotes.innerHTML = `
-                    <textarea id="stopNotesTextarea" class="form-control mb-2">${stopData.notes || ''}</textarea>
-                    <button id="saveNotesBtn" class="btn btn-success btn-sm me-2">Salva</button>
-                    <button id="cancelNotesBtn" class="btn btn-secondary btn-sm">Annulla</button>
-                `;
-            }
-
-            // Gestisci il click sul tasto "Salva"
-            if (event.target.id === 'saveNotesBtn') {
-                const newNotes = document.getElementById('stopNotesTextarea').value;
-
-                // Effettua la richiesta AJAX per salvare le note
-                fetch(`/stops/${stopData.id}/update-notes`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ notes: newNotes })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Aggiorna stopData con le nuove note
-                        stopData.notes = newNotes;
-
-                        // Aggiorna il campo note con il nuovo testo e ripristina l'icona di modifica
-                        document.getElementById('stopNotes').innerHTML = `
-                            <span id="stopNotesText">${newNotes}</span>
-                            <i class="fa-solid fa-pen-to-square" id="editNotesIcon" style="cursor: pointer;"></i>
-                        `;
-                    } else {
-                        alert('Errore durante il salvataggio delle note.');
-                    }
-                })
-                .catch(error => console.error('Errore:', error));
-            }
-
-            // Gestisci il click sul tasto "Annulla"
-            if (event.target.id === 'cancelNotesBtn') {
-                const stopNotes = document.getElementById('stopNotes');
-                // Ripristina il contenuto originale delle note con l'icona di modifica
-                stopNotes.innerHTML = `
-                    <span id="stopNotesText">${stopData.notes || 'N/A'}</span>
-                    <i class="fa-solid fa-pen-to-square" id="editNotesIcon" style="cursor: pointer;"></i>
-                `;
-            }
+            // Inizializza la mappa
+            initMap();
         });
     });
+
+    // Gestisci il click sull'icona di modifica
+    document.addEventListener('click', function(event) {
+        if (event.target.id === 'editNotesIcon') {
+            const stopNotes = document.getElementById('stopNotes');
+            stopNotes.innerHTML = `
+                <textarea id="stopNotesTextarea" class="form-control mb-2">${stopData.notes || ''}</textarea>
+                <button id="saveNotesBtn" class="btn btn-success btn-sm me-2">Salva</button>
+                <button id="cancelNotesBtn" class="btn btn-secondary btn-sm">Annulla</button>
+            `;
+        }
+
+        // Gestisci il click sul tasto "Salva"
+        if (event.target.id === 'saveNotesBtn') {
+            const newNotes = document.getElementById('stopNotesTextarea').value;
+
+            // Effettua la richiesta AJAX per salvare le note
+            fetch(`/stops/${stopData.id}/update-notes`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ notes: newNotes })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Aggiorna stopData con le nuove note
+                    stopData.notes = newNotes;
+
+                    // Aggiorna il campo note con il nuovo testo e ripristina l'icona di modifica
+                    document.getElementById('stopNotes').innerHTML = `
+                        <span id="stopNotesText">${newNotes}</span>
+                        <i class="fa-solid fa-pen-to-square" id="editNotesIcon" style="cursor: pointer;"></i>
+                    `;
+                } else {
+                    alert('Errore durante il salvataggio delle note.');
+                }
+            })
+            .catch(error => console.error('Errore:', error));
+        }
+
+        // Gestisci il click sul tasto "Annulla"
+        if (event.target.id === 'cancelNotesBtn') {
+            const stopNotes = document.getElementById('stopNotes');
+            // Ripristina il contenuto originale delle note con l'icona di modifica
+            stopNotes.innerHTML = `
+                <span id="stopNotesText">${stopData.notes || 'N/A'}</span>
+                <i class="fa-solid fa-pen-to-square" id="editNotesIcon" style="cursor: pointer;"></i>
+            `;
+        }
+    });
 </script>
-
-
-
-
-
 
