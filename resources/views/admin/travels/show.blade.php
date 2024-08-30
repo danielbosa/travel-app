@@ -26,11 +26,10 @@
                         </h2>
                         <div id="collapse{{ $index }}" class="accordion-collapse collapse" aria-labelledby="heading{{ $index }}" data-bs-parent="#accordionDays">
                             <div class="accordion-body">
-                                @if($day->done)
-                                    <span class="text-success">Completato</span>
-                                @else
-                                    <span class="text-danger">Non completato</span>
-                                @endif
+                                @php
+                                    $completionPercentage = $day->completionPercentage ?? 0;
+                                @endphp
+                                <span>Completamento: {{ number_format($completionPercentage, 0) }}%</span>
                                 <br>
                                 Ordine: {{ $day->order }}
 
@@ -81,6 +80,19 @@
                                                 <span class="visually-hidden">Next</span>
                                             </button>
                                         </div>
+
+                                        <!-- Autoplay for carousel -->
+                                        <script>
+                                            document.addEventListener('DOMContentLoaded', function() {
+                                                const carouselElement = document.getElementById('carouselImages{{ $index }}');
+                                                if (carouselElement) {
+                                                    const carousel = new bootstrap.Carousel(carouselElement, {
+                                                        interval: 5000, // 5 seconds
+                                                        ride: 'carousel'
+                                                    });
+                                                }
+                                            });
+                                        </script>
                                     @endif
                                 @endif
                             </div>
