@@ -3,3 +3,14 @@
     height: 20px;
     margin-right: 10px;
 }
+
+.btn-cta{
+    background-color: $secondary-bg;
+    padding: 8px 12px;
+    border: 2px solid $secondary-text;
+    border-radius: 30px;
+    width: 200px;
+    text-align: center;
+    text-decoration: none;
+    color: $secondary-text;
+}
