@@ -43,15 +43,23 @@ class TravelsController extends Controller
      */
     public function show($id)
     {
-        // get travel data
-        $travel = Travel::with('days')->findOrFail($id);
+        // get travel data with days and stops
+        $travel = Travel::with(['days.stops.stop_images'])->findOrFail($id);
 
         // check if travel belongs to current user
         if ($travel->user_id !== Auth::id()) {
             abort(403, 'Accesso negato');
         }
 
-        // pass data
+        // Calculate completion percentage for each day
+        foreach ($travel->days as $day) {
+            $totalStops = $day->stops->count();
+            $completedStops = $day->stops->where('visited', 1)->count();
+            $completionPercentage = $totalStops > 0 ? ($completedStops / $totalStops) * 100 : 0;
+            $day->completionPercentage = intval($completionPercentage);
+        }
+
+        // pass data to the view
         return view('admin.travels.show', ['travel' => $travel]);
     }
 
