@@ -66,7 +66,7 @@
                             {{-- TRAVELS MENU OPTION --}}
                             {{-- !!! --}}
                             <li class="nav-item">
-                                <a class="nav-link" href="">I tuoi viaggi</a>
+                                <a class="nav-link" href="/admin">I tuoi viaggi</a>
                             </li>
 
                         @endguest
