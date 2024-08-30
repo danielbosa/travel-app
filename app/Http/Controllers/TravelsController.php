@@ -44,7 +44,7 @@ class TravelsController extends Controller
     public function show($id)
     {
         // get travel data
-        $travel = Travel::findOrFail($id);
+        $travel = Travel::with('days')->findOrFail($id);
 
         // check if travel belongs to current user
         if ($travel->user_id !== Auth::id()) {
