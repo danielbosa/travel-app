@@ -3,4 +3,19 @@
         max-width: 100%;
         height: auto;
     }
+    .btn-cta{
+        background-color: $secondary-bg;
+        padding: 8px 12px;
+        border: 2px solid $secondary-text;
+        border-radius: 30px;
+        width: 200px;
+        text-align: center;
+        text-decoration: none;
+        color: $secondary-text;
+    }
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
 }

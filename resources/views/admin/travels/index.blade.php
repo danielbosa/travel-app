@@ -30,5 +30,12 @@
         </div>              
         @endforeach
     @endif
+
+    <!-- create btn -->
+    <div class="text-center my-4">
+        <a href="{{ route('travels.create') }}" class="btn-cta">
+            Crea un nuovo viaggio
+        </a>
+    </div>
 </section>
 @endsection

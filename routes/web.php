@@ -38,6 +38,9 @@ Route::middleware('auth')->group(function () {
     //Route::get('/mytravels', [TravelsController::class, 'index'])->name('mytravels.index');
     Route::get('/travels/{id}', [TravelsController::class, 'show'])->name('travels.show');
 
+    //route for create travel
+    Route::get('travels/create', [TravelsController::class, 'create'])->name('travels.create');
+
     // route for updating status "visited" on stops table
     Route::put('/stops/{stop}', [StopController::class, 'update'])->name('stops.update');
 
