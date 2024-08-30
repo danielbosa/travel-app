@@ -167,7 +167,7 @@
 @endsection
 
 {{-- SCRIPT --}}
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZ4vCEJB25qHkOlSfaseqw3OpDbbrXxBA&callback=initMap"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.api_key') }}&callback=initMap"></script>
 <script>
     let stopData; // Definisci stopData a livello globale
 
