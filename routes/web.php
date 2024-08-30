@@ -44,6 +44,10 @@ Route::middleware('auth')->group(function () {
     // route for updating status "visited" on stops table
     Route::put('/stops/{stop}', [StopController::class, 'update'])->name('stops.update');
 
+    // route for edit notes stops
+    Route::post('/stops/{stop}/update-notes', [StopController::class, 'updateNotes']);
+
+
 });
 
 require __DIR__ . '/auth.php';

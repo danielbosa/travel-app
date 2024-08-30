@@ -65,4 +65,17 @@ class StopController extends Controller
     {
         //
     }
+
+    public function updateNotes(Request $request, Stop $stop)
+    {
+        $request->validate([
+            'notes' => 'string|nullable',
+        ]);
+
+        $stop->notes = $request->notes;
+        $stop->save();
+
+        return response()->json(['success' => true]);
+    }
+
 }

@@ -111,79 +111,156 @@
         </div>
     </div>
     <!-- modal for stop details -->
-        <div class="modal fade" id="stopModal" tabindex="-1" aria-labelledby="stopModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="stopModalLabel"></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- stop details -->
-                        <div id="stopDetails">
-                            <p><strong>Voto:</strong> <span id="stopRating"></span></p>
-                            <p><strong>Descrizione:</strong> <span id="stopDescription"></span></p>
-                            <p><strong>Note:</strong> <span id="stopNotes"></span></p>
-
-                            <!-- carousel -->
-                            <div id="stopImagesCarousel" class="carousel slide" data-bs-ride="carousel">
-                                <div class="carousel-inner" id="carouselInnerImages">
-                                    <!-- images will be loaded here -->
-                                </div>
-                                <button class="carousel-control-prev" type="button" data-bs-target="#stopImagesCarousel" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#stopImagesCarousel" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
+    <div class="modal fade" id="stopModal" tabindex="-1" aria-labelledby="stopModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="stopModalLabel">Dettagli Tappa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Dettagli della tappa -->
+                    <div id="stopDetails">
+                        <p><strong>Voto:</strong> <span id="stopRating"></span></p>
+                        <p><strong>Descrizione:</strong> <span id="stopDescription"></span></p>
+    
+                        <!-- Campo Note Modificabile -->
+                        <div id="noteSection">
+                            <p><strong>Note:</strong> 
+                                <span id="stopNotes">
+                                    <span id="stopNotesText">{{ $stop->notes ?? 'N/A' }}</span>
+                                    <i class="fa-solid fa-pen-to-square" id="editNotesIcon" style="cursor: pointer;"></i>
+                                </span>
+                            </p>
+                            <!-- Textarea nascosta inizialmente per modificare le note -->
+                            <textarea id="notesTextarea" class="form-control d-none"></textarea>
+                            <!-- Bottoni per salvare o annullare le modifiche -->
+                            <div id="notesButtons" class="mt-2 d-none">
+                                <button id="saveNotesBtn" class="btn btn-primary btn-sm">Salva</button>
+                                <button id="cancelNotesBtn" class="btn btn-secondary btn-sm">Annulla</button>
                             </div>
+                        </div>
+    
+                        <!-- Carosello delle immagini -->
+                        <div id="stopImagesCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner" id="carouselInnerImages">
+                                <!-- Immagini verranno caricate qui -->
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#stopImagesCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#stopImagesCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
 </section>
 @endsection
 
 {{-- SCRIPT --}}
-{{-- js script to show stop details dinamically: based on which stop is clicked --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const stopModal = document.getElementById('stopModal');
-            stopModal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget; // Pulsante che ha attivato la modale
-                const stopData = JSON.parse(button.getAttribute('data-stop'));
-                const stopName = button.getAttribute('data-stop-name'); // Recupera il nome della tappa
+<script>
+    let stopData; // Definisci stopData a livello globale
 
-                // Imposta il titolo della modale con il nome della tappa
-                document.getElementById('stopModalLabel').textContent = stopName;
+    document.addEventListener('DOMContentLoaded', function() {
+        const stopModal = document.getElementById('stopModal');
+        stopModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget; // Bottone che ha attivato la modale
+            stopData = JSON.parse(button.getAttribute('data-stop')); // Inizializza stopData con i dati della tappa
 
-                // Popola i campi della modale con i dati della tappa
-                document.getElementById('stopRating').textContent = stopData.rating || 'N/A';
-                document.getElementById('stopDescription').textContent = stopData.description || 'N/A';
-                document.getElementById('stopNotes').textContent = stopData.notes || 'N/A';
+            // Passa i dati della tappa alla modale
+            document.getElementById('stopModalLabel').textContent = stopData.name;
+            document.getElementById('stopRating').textContent = stopData.rating || 'N/A';
+            document.getElementById('stopDescription').textContent = stopData.description || 'N/A';
 
-                // Carica le immagini per il carosello
-                const carouselInner = document.getElementById('carouselInnerImages');
-                carouselInner.innerHTML = ''; // Pulisce le immagini precedenti
+            // Aggiorna il campo note con l'icona di modifica
+            const stopNotes = document.getElementById('stopNotes');
+            stopNotes.innerHTML = `
+                <span id="stopNotesText">${stopData.notes || 'N/A'}</span>
+                <i class="fa-solid fa-pen-to-square" id="editNotesIcon" style="cursor: pointer;"></i>
+            `;
 
-                if (stopData.stop_images.length > 0) {
-                    stopData.stop_images.forEach(function(image, index) {
-                        const activeClass = index === 0 ? 'active' : '';
-                        carouselInner.innerHTML += `
-                            <div class="carousel-item ${activeClass}">
-                                <img src="{{ asset('images/stop_images/') }}/${image.image_path}" class="d-block w-100" alt="Immagine Tappa">
-                            </div>
-                        `;
-                    });
-                } else {
-                    carouselInner.innerHTML = '<p>Non ci sono immagini per questa tappa.</p>';
-                }
-            });
+            // Carica le immagini del carosello
+            const carouselInner = document.getElementById('carouselInnerImages');
+            carouselInner.innerHTML = ''; // Pulisce le immagini precedenti
+            
+            if (stopData.stop_images.length > 0) {
+                stopData.stop_images.forEach(function(image, index) {
+                    const activeClass = index === 0 ? 'active' : '';
+                    carouselInner.innerHTML += `
+                        <div class="carousel-item ${activeClass}">
+                            <img src="{{ asset('images/stop_images/') }}/${image.image_path}" class="d-block w-100" alt="Immagine Tappa">
+                        </div>
+                    `;
+                });
+            } else {
+                carouselInner.innerHTML = '<p>Non ci sono immagini per questa tappa.</p>';
+            }
         });
-    </script>
+
+        // Gestisci il click sull'icona di modifica
+        document.addEventListener('click', function(event) {
+            if (event.target.id === 'editNotesIcon') {
+                const stopNotes = document.getElementById('stopNotes');
+                stopNotes.innerHTML = `
+                    <textarea id="stopNotesTextarea" class="form-control mb-2">${stopData.notes || ''}</textarea>
+                    <button id="saveNotesBtn" class="btn btn-success btn-sm me-2">Salva</button>
+                    <button id="cancelNotesBtn" class="btn btn-secondary btn-sm">Annulla</button>
+                `;
+            }
+
+            // Gestisci il click sul tasto "Salva"
+            if (event.target.id === 'saveNotesBtn') {
+                const newNotes = document.getElementById('stopNotesTextarea').value;
+
+                // Effettua la richiesta AJAX per salvare le note
+                fetch(`/stops/${stopData.id}/update-notes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ notes: newNotes })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Aggiorna stopData con le nuove note
+                        stopData.notes = newNotes;
+
+                        // Aggiorna il campo note con il nuovo testo e ripristina l'icona di modifica
+                        document.getElementById('stopNotes').innerHTML = `
+                            <span id="stopNotesText">${newNotes}</span>
+                            <i class="fa-solid fa-pen-to-square" id="editNotesIcon" style="cursor: pointer;"></i>
+                        `;
+                    } else {
+                        alert('Errore durante il salvataggio delle note.');
+                    }
+                })
+                .catch(error => console.error('Errore:', error));
+            }
+
+            // Gestisci il click sul tasto "Annulla"
+            if (event.target.id === 'cancelNotesBtn') {
+                const stopNotes = document.getElementById('stopNotes');
+                // Ripristina il contenuto originale delle note con l'icona di modifica
+                stopNotes.innerHTML = `
+                    <span id="stopNotesText">${stopData.notes || 'N/A'}</span>
+                    <i class="fa-solid fa-pen-to-square" id="editNotesIcon" style="cursor: pointer;"></i>
+                `;
+            }
+        });
+    });
+</script>
+
+
+
+
 
 
