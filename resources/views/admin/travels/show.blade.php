@@ -31,7 +31,7 @@
                                 @endphp
                                 <span>Completamento: {{ number_format($completionPercentage, 0) }}%</span>
                                 <br>
-                                Ordine: {{ $day->order }}
+                                {{-- Ordine: {{ $day->order }} --}}
 
                                 <h6>Tappe:</h6>
                                 @if($day->stops->isEmpty())
@@ -41,18 +41,23 @@
                                         @foreach($day->stops as $stop)
                                             <li class="d-flex align-items-center mb-2">
                                                 <div class="row w-100">
-                                                    <div class="col-md-8">
+                                                    <div class="col-8">
                                                         <a href="#" class="stop-name" data-bs-toggle="modal" data-bs-target="#stopModal" data-stop="{{ $stop->toJson() }}">
                                                             <strong>{{ $stop->name }}</strong>
                                                         </a>
                                                     </div>
-                                                    <div class="col-md-4 text-end">
+                                                    <div class="col-4 text-end">
                                                         <input type="checkbox" class="stop-checkbox" data-id="{{ $stop->id }}" {{ $stop->visited ? 'checked' : '' }}>
                                                     </div>
                                                 </div>
                                             </li>
                                         @endforeach
                                     </ul>
+
+                                    <!-- Pulsante per aggiungere una nuova tappa -->
+                                    <div class="text-end mt-3">
+                                        <a href="{{ route('stops.create', ['travel_id' => $travel->id, 'day_id' => $day->id]) }}" class="btn btn-primary">Aggiungi Nuova Tappa</a>
+                                    </div>
 
                                     <!-- carousel -->
                                     <h6>Immagini delle tappe:</h6>

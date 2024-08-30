@@ -41,11 +41,19 @@ Route::middleware('auth')->group(function () {
     //route for create travel
     Route::get('travels/create', [TravelsController::class, 'create'])->name('travels.create');
 
+    // Route per memorizzare una nuova tappa
+    Route::post('/stops', [StopController::class, 'store'])->name('stops.store');
+
     // route for updating status "visited" on stops table
     Route::put('/stops/{stop}', [StopController::class, 'update'])->name('stops.update');
 
     // route for edit notes stops
     Route::post('/stops/{stop}/update-notes', [StopController::class, 'updateNotes']);
+
+    // route for create stops
+    Route::get('/stops/create/{travel_id}/{day_id}', [StopController::class, 'create'])->name('stops.create');
+
+
 
 
 });

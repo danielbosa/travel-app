@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Stop;
+use App\Models\Location;
 use Illuminate\Http\Request;
 
 class StopController extends Controller
@@ -18,18 +19,52 @@ class StopController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($travel_id, $day_id)
     {
-        //
+        return view('admin.stops.create', ['travel_id' => $travel_id, 'day_id' => $day_id]);
     }
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        // Validazione dei dati della richiesta
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'name_location' => 'required|string',
+            'travel_id' => 'required|exists:travels,id',
+            'day_id' => 'required|exists:days,id', // Verifica che il day_id sia valido
+        ]);
+
+        // Creazione di una nuova tappa
+        $stop = new Stop();
+        $stop->name = $request->input('name');
+        $stop->description = $request->input('description');
+        $stop->day_id = $request->input('day_id'); // Assegna il day_id
+        $stop->save();
+
+        // Creazione di una nuova località associata alla tappa, senza verificare se esiste già
+        $location = new Location();
+        $location->stop_id = $stop->id; // Associa la località alla tappa
+        $location->name = $request->input('name_location');
+        $location->lat = $request->input('latitude');
+        $location->lng = $request->input('longitude');
+        $location->save(); // Salva sempre una nuova località
+
+        // Redirect alla vista del viaggio
+        return redirect()->route('travels.show', ['id' => $request->input('travel_id')])
+                        ->with('success', 'Tappa aggiunta con successo.');
     }
+
+
+
+
+
 
     /**
      * Display the specified resource.
