@@ -12,6 +12,16 @@ class Location extends Model
 
     protected $guarded = [];
 
+    public function getLatAttribute($value)
+    {
+        return (float) $value;
+    }
+
+    public function getLngAttribute($value)
+    {
+        return (float) $value;
+    }
+
     // one2one with stops
     public function stop(): BelongsTo
     {
