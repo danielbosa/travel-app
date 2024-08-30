@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\TravelsController;
+use App\Http\Controllers\StopController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +24,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 //Middlware controlla se l'utente è autenticato e verificato; se sì, allora le rotte vengono eseguite; se no entra in gioco la rotta di fallback che rimanda alla dashboard: ma se non è autenticato, allora viene rimandato alla login (e questo è definito in app/Http/Middleware/Authenticate.php)
 Route::middleware(['auth', 'verified'])->name('admin.')->prefix('admin')->group(function () {
-    //Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/', [TravelsController::class, 'index'])->name('mytravels.index');
 });
 
@@ -36,10 +37,14 @@ Route::middleware('auth')->group(function () {
     //route for mytravels for logged-in
     //Route::get('/mytravels', [TravelsController::class, 'index'])->name('mytravels.index');
     Route::get('/travels/{id}', [TravelsController::class, 'show'])->name('travels.show');
+
+    // route for updating status "visited" on stops table
+    Route::put('/stops/{stop}', [StopController::class, 'update'])->name('stops.update');
+
 });
 
 require __DIR__ . '/auth.php';
 
 Route::fallback(function () {
-    return redirect()->route('admin.dashboard');
+    return redirect()->route('home');
 });
