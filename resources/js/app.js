@@ -2,6 +2,9 @@ import "./bootstrap";
 import "~resources/scss/app.scss";
 import * as bootstrap from "bootstrap";
 import.meta.glob(["../img/**", "../fonts/**"]);
+// resources/js/app.js
+import './travel';
+
 
 /*SCRIPT x Preview di immagine caricata da utente
     //prendo la casella di input file

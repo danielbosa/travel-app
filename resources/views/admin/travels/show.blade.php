@@ -41,20 +41,9 @@
                                     <ul>
                                         @foreach($day->stops as $stop)
                                             <li>
-                                                <form action="{{ route('stops.update', $stop->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <label>
-                                                        <input type="checkbox" name="visited" value="1" onchange="this.form.submit()" {{ $stop->visited ? 'checked' : '' }}>
-                                                        {{ $stop->name }}
-                                                    </label>
-                                                </form>
-                                                {{-- Uncomment below if you want to show more stop details
-                                                <br>
-                                                {{ $stop->description }}<br>
-                                                Voto: {{ $stop->vote ?? 'N/A' }}<br>
-                                                Note: {{ $stop->notes ?? 'N/A' }}
-                                                --}}
+                                                <input type="checkbox" class="stop-checkbox" data-id="{{ $stop->id }}" {{ $stop->visited ? 'checked' : '' }}>
+                                                <strong>{{ $stop->name }}</strong>
+                                                <!-- Altri dettagli della tappa -->
                                             </li>
                                         @endforeach
                                     </ul>
