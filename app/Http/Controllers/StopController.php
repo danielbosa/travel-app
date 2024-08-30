@@ -52,7 +52,18 @@ class StopController extends Controller
      */
     public function update(Request $request, Stop $stop)
     {
-        //
+        // Validazione se necessario
+        // $request->validate([
+        //     'visited' => 'nullable|boolean',
+        // ]);
+
+        // Aggiornamento dello stato 'visited'
+        $stop->update([
+            'visited' => $request->has('visited'),
+        ]);
+
+        // Redireziona indietro o alla pagina desiderata
+        return redirect()->back();
     }
 
     /**
