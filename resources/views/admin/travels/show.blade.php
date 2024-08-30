@@ -38,15 +38,20 @@
                                 @if($day->stops->isEmpty())
                                     <p>Non ci sono tappe associate a questa giornata.</p>
                                 @else
-                                    <ul>
+                                    <div class="container">
                                         @foreach($day->stops as $stop)
-                                            <li>
-                                                <input type="checkbox" class="stop-checkbox" data-id="{{ $stop->id }}" {{ $stop->visited ? 'checked' : '' }}>
-                                                <strong>{{ $stop->name }}</strong>
-                                                <!-- Altri dettagli della tappa -->
-                                            </li>
+                                            <div class="row mb-2 align-items-center">
+                                                <!-- Nome dello stop -->
+                                                <div class="col-9">
+                                                    <strong>{{ $stop->name }}</strong>
+                                                </div>
+                                                <!-- Checkbox -->
+                                                <div class="col-3 d-flex justify-content-end">
+                                                    <input type="checkbox" class="stop-checkbox" data-id="{{ $stop->id }}" {{ $stop->visited ? 'checked' : '' }}>
+                                                </div>
+                                            </div>
                                         @endforeach
-                                    </ul>
+                                    </div>
                                 @endif
                             </div>
                         </div>
